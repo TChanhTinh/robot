@@ -1,14 +1,21 @@
-module.exports = (app) => {
+const { Router } = require("express")
+
+module.exports = (app, pool, router) => {
  app.get("/", (req, res) => {
     res.send("hello world!")
  })
- 
- app.post("word/{para}", (req, res) => {
-  const page
-  db.words.findOne({name: req.params}, (err, doc) => {
-   if err 
-    console.log(err)
-   page = renderWord(doc)
- }) 
- res.render(page)
+ app.get("/directory/:word", async (req, res) => {
+   const word = req.params.word
+
+   const { rows } = await pool.query(`SELECT * FROM DICTIONARY_VETER WHERE word='${word}'`)
+
+   res.send(rows[0]) 
+
+ })
+
+  /*router.get('/directory/:word', async (req, res) => {
+   const word = req.params
+   const { rows } = await pool.query(`SELECT * FROM DICTIONARY_VETER WHERE word='${word}'`)
+   res.send(rows[0])
+  })*/
 }
