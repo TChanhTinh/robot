@@ -7,7 +7,7 @@ const app = express()
 
 const router = new Router()
 const { Pool, Client } = require('pg')
-const connectionString = 'postgresql://postgres:admin@localhost:5432/dictionary'
+const connectionString = 'postgresql://postgres:admin@localhost:5432/robot'
 
 app.use(bodyParser.urlencoded({ extended: false }))
  
