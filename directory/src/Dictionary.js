@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Input, Row, Col, Layout } from 'antd';
+import { Input, Row, Col, Layout, Button } from 'antd';
+import { formOutline } from '@ant-design/icons';
+import AddWord from './AddWord';
 import axios from 'axios'
+import WordSection from './WordSection';
 
 const { Search } = Input;
 const { Content, Header } = Layout
@@ -15,6 +18,10 @@ function Dictionary() {
     timestamp: '',
     username: ''
   })
+  const [stamp, setStamp] = useState({
+    username: '',
+    timestamp: ''
+  })
 
   useEffect(() => {
     axios.get(`http://localhost:9000/search/dictionary/${word}`)
@@ -25,12 +32,16 @@ function Dictionary() {
         type: res.data.type,
         pronunce: res.data.pronunciation,
         description: res.data.description,
+      }
+
+      const stamp = {
         timestamp: res.data.timestamp,
         username: res.data.username
       }
 
       console.log(res.data)
       setWordData(wordDa)
+      setStamp(stamp)
     })
     .catch( err => {
       console.log(err)
@@ -38,47 +49,42 @@ function Dictionary() {
   }, [word])
 
   return (
-    <div className="Dictionary">
-          <Row>
-            <Col span={16}>
-            </Col>
-            <Col span={8}>
+    <div className="dictionary-container">
+          <Row className="dictionary-container-tab-menu">
+            <Col span={6}/>
+            <Col className="dictionary-search-bar" span={12}>
               <Search onSearch={value => setWord(value)} placeholder="Search word"></Search>
             </Col>
-          </Row>
 
-          <Row>
-            <Col span={24}>
-              {`${word} / ${wordData.mean}`}
+            <Col span={4}/>
+
+            <Col span={1} >
+              <AddWord className="dictionary-container-tab-menu-button" wordData={wordData}
+              icon="🖉"/>
             </Col>
-          </Row>
-
-          <Row>
-            <Col span={24}>
-              {wordData.type}
+            <Col span={1}>
+              <AddWord className="dictionary-container-tab-menu-button" icon="+"/>
             </Col>
           </Row>
 
-          <Row>
-            <Col span={24}>
-              {wordData.pronunce}
-            </Col>
-          </Row>
+          <div className="dictionary-content">
+            {Object.entries(wordData).map(([key, value]) => {
+              return (
+                <div className="dictionary-content-section">
+                  <WordSection className="dictionary-content-section" title={key.toUpperCase()} data={value}/>
+                </div>
+              )
+            })}
 
-          <Row>
-            <Col span={24}>
-              {wordData.description}
-            </Col>
-          </Row>
-
-          <Row>
-            <Col span={12}>
-              {wordData.username}
-            </Col>
-            <Col span={12}>
-              {wordData.timestamp}
-            </Col>
-          </Row>
+            <Row className="dictionary-stamp">
+              <Col span={12}>
+                {stamp.username}
+              </Col>
+              <Col span={12}>
+                {stamp.timestamp}
+              </Col>
+            </Row>
+          </div>
     </div>
   );
 }

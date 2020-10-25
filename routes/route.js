@@ -5,7 +5,7 @@ module.exports = (app, pool, router) => {
     res.send("hello world!")
  })
 
- app.get("/dictionary/search/:word", async (req, res) => {
+ app.get("/search/dictionary/:word", async (req, res) => {
    const word = req.params.word
    const { rows } = await pool.query(`SELECT * FROM Dictionary WHERE word='${word}'`)
    res.send(rows[0])
@@ -25,5 +25,6 @@ module.exports = (app, pool, router) => {
     (err, res) => {
       console.log(err, res)
     })
+    res.send("added")
  })
 }

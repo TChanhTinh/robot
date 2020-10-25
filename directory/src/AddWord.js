@@ -2,36 +2,37 @@ import React, {useState} from 'react'
 import { Button, Modal, Form } from 'antd'
 import WordForm from './WordForm';
 
-function AddWord() {
-    const [modalToggle, setModalToggle] = useState(false)
+function AddWord({ icon, wordData }) {
+    const [modalVisibility, setModalVisibility] = useState(false)
     const [loading, setLoading] = useState(false)
 
     const [form] = Form.useForm();
 
     function showModal() {
-        setModalToggle(true)
+        setModalVisibility(true)
     }
 
     function handleOk(e) {
         setLoading(true)
         setTimeout(() => {
             form.submit()
-        }, 3000)
+            setModalVisibility(false)
+            setLoading(false)
+        }, 1000)
     }
 
     function handleCancel(e) {
         console.log(e);
-        setModalToggle(false)
+        setModalVisibility(false)
     };
 
     return (
         <div>
-            <Button type="primary" onClick={() => showModal()}>
-                Add word
+            <Button type="primary" icon={icon} shape="circle" onClick={() => showModal()}>
             </Button>
             <Modal
                 title="Add new word to dictionary"
-                visible={modalToggle}
+                visible={modalVisibility}
                 onOk={() => handleOk()}
                 onCancel={() => handleCancel()}
                 footer={[
@@ -43,7 +44,7 @@ function AddWord() {
                     </Button>,
                 ]}
             >
-                <WordForm form={form}/>
+                <WordForm form={form} wordData={wordData}/>
             </Modal>
         </div>
     )

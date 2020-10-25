@@ -1,22 +1,46 @@
-import React from 'react'
-import { Form, Button, Input } from 'antd'
+import React, { useEffect } from 'react'
+import { Form, Input, notification  } from 'antd'
 import axios from 'axios';
 
 const { TextArea } = Input
 
-function WordForm({form}) {
+function WordForm({ form, wordData }) {
     const layout = {
         labelCol: { span: 8 },
         wrapperCol: { span: 16 },
     };
 
     const onFinish = values => {
-        console.log('Success:', values);
+        //console.log('Success:', values);
         axios.post('http://localhost:9000/dictionary/add', values)
         .then(res => {
-            console.log("Send success")
+            console.log(res)
+            form.resetFields()
+            openNotification("Success!")
         })
     };
+
+    const openNotification = (description) => {
+        notification.open({
+          message: 'Form submit',
+          description: description,
+          onClick: () => {
+            console.log('Notification Clicked!');
+          },
+        });
+    };
+
+    useEffect(() => {
+        if(wordData != undefined)
+            form.setFieldsValue({
+                username: wordData.username,
+                word: wordData.word,
+                mean: wordData.mean,
+                type: wordData.type,
+                pronounce: wordData.pronunce,
+                description: wordData.description
+            })
+    }, [wordData])
 
     return (
         <Form
@@ -30,7 +54,7 @@ function WordForm({form}) {
                 label="Username"
                 name="username"
             >
-                <Input></Input>
+                <Input/>
             </Form.Item>
             <Form.Item
                 label="Word"
@@ -48,7 +72,7 @@ function WordForm({form}) {
             </Form.Item>
 
             <Form.Item
-                label="Word type"
+                label="Type"
                 name="type"
                 rules={[{ required: true, message: 'please input vaild word!' }]}
             >

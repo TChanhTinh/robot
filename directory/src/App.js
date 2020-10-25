@@ -2,7 +2,6 @@ import React from 'react';
 import Dictionary from './Dictionary'
 import { Layout } from 'antd'
 import './App.css';
-import AddWord from './AddWord';
 
 const { Content, Header } = Layout
 
@@ -13,8 +12,7 @@ function App() {
         <Header style={{color: 'white'}}>
           Vetter Dictionary
         </Header>
-        <Content style={{ padding: '0 50px' }}>
-          <AddWord/>
+        <Content className="content-container">
           {<Dictionary/>}
         </Content>
       </Layout>
