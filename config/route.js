@@ -1,35 +1,42 @@
 const { requiresAdmin } = require('./middlewares/authorization')
 const admin = require('../app/admin')
 
-module.exports = (app, passport, pool) => {
- app.get("/", (req, res) => {
+module.exports = (app, passport, db) => {
+  app.get("/", (req, res) => {
     res.send("hello world!")
- })
+  })
 
- app.get("/search/dictionary/:word", async (req, res) => {
-   const word = req.params.word
-   const { rows } = await pool.query(`SELECT * FROM Dictionary WHERE word='${word}'`)
-   res.send(rows[0])
- })
-
- app.post("/dictionary/add", (req, res) => {
-   word = req.body
-   pool.query(`INSERT INTO Dictionary(word, mean, type, pronunciation, description, timestamp, username) 
-   values(
-    '${word.word}',
-    '${word.mean}',
-    '${word.type}',
-    '${word.pronounce}',
-    '${word.description}',
-    CURRENT_DATE,
-    '${word.username}')`,
-    (err, res) => {
-      console.log(err, res)
+  app.get("/search/dictionary/:word", async (req, res) => {
+    const word = req.params.word
+    //const { rows } = await pool.query(`SELECT * FROM Dictionary WHERE word='${word}'`)
+    db.query('SELECT * FROM Dictionary WHERE word=$1', [word], (err, results) => {
+      if (err)
+        res.send(err)
+      if (results)
+        res.send(results.rows[0])
     })
-    res.send("added")
- })
 
- app.get('/dictionary/login', admin.renderLogin)
- app.post('/dictionary/login', passport.authenticate('local', { failureRedirect: '/' }), admin.login)
- app.get('/admin/panel', requiresAdmin, admin.renderPanel)
+  })
+
+  app.post("/dictionary/add", (req, res) => {
+    word = req.body
+    db.query('INSERT INTO Dictionary(word, mean, type, pronunciation, description, timestamp, username) values($1, $2, $3, $4, $5, CURRENT_DATE, $6)',
+      [word.word, word.mean, word.type, word.pronounce, word.description, word.username],
+      (err, results) => {
+        if (err) {
+          console.log(err)
+          res.send("failed")
+        }
+        if (results) {
+          res.send("added")
+        }
+      })
+  })
+
+  app.get('/dictionary/login', admin.renderLogin)
+  app.post('/dictionary/login', (req, res, next) => {
+    passport.authenticate('local', { successRedirect: '/admin', failureRedirect: '/login' })(req, res, next)
+  })
+
+  app.get('/admin/panel', requiresAdmin, admin.renderPanel)
 }
