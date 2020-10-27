@@ -1,6 +1,7 @@
-const { Router } = require("express")
+const { requiresAdmin } = require('./middlewares/authorization')
+const admin = require('../app/admin')
 
-module.exports = (app, pool, router) => {
+module.exports = (app, passport, pool) => {
  app.get("/", (req, res) => {
     res.send("hello world!")
  })
@@ -27,4 +28,8 @@ module.exports = (app, pool, router) => {
     })
     res.send("added")
  })
+
+ app.get('/dictionary/login', admin.renderLogin)
+ app.post('/dictionary/login', passport.authenticate('local', { failureRedirect: '/' }), admin.login)
+ app.get('/admin/panel', requiresAdmin, admin.renderPanel)
 }
