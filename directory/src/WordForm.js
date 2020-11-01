@@ -12,7 +12,7 @@ function WordForm({ form, wordData }) {
 
     const onFinish = values => {
         //console.log('Success:', values);
-        axios.post('http://localhost:9000/dictionary/add', values)
+        axios.post('/dictionary/add', values)
         .then(res => {
             console.log(res)
             form.resetFields()

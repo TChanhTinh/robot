@@ -24,7 +24,7 @@ function Dictionary() {
   })
 
   useEffect(() => {
-    axios.get(`http://localhost:9000/search/dictionary/${word}`)
+    axios.get(`/search/dictionary/${word}`)
     .then( res => {
       const wordDa = {
         word: res.data.word,
@@ -50,6 +50,7 @@ function Dictionary() {
 
   return (
     <div className="dictionary-container">
+      <a href='/dictionary/login'><Button>Login</Button></a>
           <Row className="dictionary-container-tab-menu">
             <Col span={6}/>
             <Col className="dictionary-search-bar" span={12}>

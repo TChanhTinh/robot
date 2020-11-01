@@ -1,6 +1,12 @@
+var path = require('path');
+
 module.exports = {
 	renderLogin: (req, res) => {
-		res.render('login')
+		res.sendFile('login.html', { root: path.join(__dirname, '../../views')})
+	},
+
+	renderRegister: (req, res) => {
+		res.sendFile('register.html', { root: path.join(__dirname, '../../views')})
 	},
 
 	login: (req, res) => {

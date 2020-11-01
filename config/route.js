@@ -1,9 +1,11 @@
+var path = require('path');
+
 const { requiresAdmin } = require('./middlewares/authorization')
 const admin = require('../app/admin')
 
 module.exports = (app, passport, db) => {
   app.get("/", (req, res) => {
-    res.send("hello world!")
+    res.sendFile('index.html', { root: path.join(__dirname, '../dictionary')})
   })
 
   app.get("/search/dictionary/:word", async (req, res) => {
@@ -34,8 +36,10 @@ module.exports = (app, passport, db) => {
   })
 
   app.get('/dictionary/login', admin.renderLogin)
+  app.get('/dictionary/register', admin.renderRegister)
   app.post('/dictionary/login', (req, res, next) => {
-    passport.authenticate('local', { successRedirect: '/admin', failureRedirect: '/login' })(req, res, next)
+    console.log(req.body)
+    passport.authenticate('local', { successRedirect: '/dictionary/admin', failureRedirect: '/dictionary/login' })(req, res, next)
   })
 
   app.get('/admin/panel', requiresAdmin, admin.renderPanel)

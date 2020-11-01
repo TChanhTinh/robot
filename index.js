@@ -29,6 +29,11 @@ const pool = new Pool({
 
 //Use morgan logging
 app.use(morgan())
+app.use(express.static('public'))
+app.use(express.static('dictionary'))
+app.use('/vendor', express.static('vendor'))
+app.use('/scripts', express.static('scripts'))
+app.use('/style', express.static('views/style'))
 
 //Routing
 require("./config/route")(app, passport, db)
