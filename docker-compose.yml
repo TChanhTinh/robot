@@ -8,7 +8,7 @@ web:
         - "pg"
 
 pg:
-  image: "postgres:12"
+  build: ./pg
   container_name: "pgrobot"
   environment:
     POSTGRES_DB: "db"
@@ -16,4 +16,4 @@ pg:
   ports:
     - "5431:5432"
   volumes:
-    - ./pg/db_data:/var/lib/postgresql/data
+    - ./pg/db_data:/var/lib/postgresql/db_data/data

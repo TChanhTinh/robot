@@ -1,5 +1,0 @@
-file="/docker-entrypoint-initdb.d/dump.pgdata"
-dbname=db
-
-echo "Restoring DB from file"
-pg_restore -U postgres --dbname=$dbname --verbose --single-transaction < "$file" || exit 1
