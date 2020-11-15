@@ -1,0 +1,19 @@
+web:
+    build: ./robot
+    volumes:
+        - ".:/src/robot"
+    ports:
+        - "3001:9000"
+    links:
+        - "pg"
+
+pg:
+  image: "postgres:12"
+  container_name: "pgrobot"
+  environment:
+    POSTGRES_DB: "db"
+    POSTGRES_HOST_AUTH_METHOD: "trust"
+  ports:
+    - "5431:5432"
+  volumes:
+    - ./pg/db_data:/var/lib/postgresql/data
