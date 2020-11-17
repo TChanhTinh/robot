@@ -1,5 +1,6 @@
 web:
     build: ./robot
+    container_name: "webrobot2"
     volumes:
         - ".:/src/robot"
     ports:
@@ -9,7 +10,7 @@ web:
 
 pg:
   build: ./pg
-  container_name: "pgrobot"
+  container_name: "pgrobot2"
   environment:
     POSTGRES_DB: "db"
     POSTGRES_HOST_AUTH_METHOD: "trust"

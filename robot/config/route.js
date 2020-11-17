@@ -22,7 +22,7 @@ module.exports = (app, passport, db) => {
 
   app.post("/dictionary/add", (req, res) => {
     word = req.body
-    db.query('INSERT INTO Dictionary(word, mean, type, pronunciation, description, times, username) values($1, $2, $3, $4, $5, CURRENT_DATE, $6)',
+    db.query('INSERT INTO VETERINARY_HUSBANDRY(word, mean, type, pronunciation, description, times, username) values($1, $2, $3, $4, $5, CURRENT_DATE, $6)',
       [word.word, word.mean, word.type, word.pronounce, word.description, word.username],
       (err, results) => {
         if (err) {
