@@ -11,7 +11,7 @@ module.exports = (app, passport, db) => {
   app.get("/search/dictionary/:word", async (req, res) => {
     const word = req.params.word
     //const { rows } = await pool.query(`SELECT * FROM Dictionary WHERE word='${word}'`)
-    db.query('SELECT * FROM Dictionary WHERE word=$1', [word], (err, results) => {
+    db.query('SELECT * FROM veterinary_husbandry WHERE lower(word)=lower($1)', [word], (err, results) => {
       if (err)
         res.send(err)
       if (results)
@@ -22,7 +22,7 @@ module.exports = (app, passport, db) => {
 
   app.post("/dictionary/add", (req, res) => {
     word = req.body
-    db.query('INSERT INTO Dictionary(word, mean, type, pronunciation, description, timestamp, username) values($1, $2, $3, $4, $5, CURRENT_DATE, $6)',
+    db.query('INSERT INTO VETERINARY_HUSBANDRY(word, mean, type, pronunciation, description, times, username) values($1, $2, $3, $4, $5, CURRENT_DATE, $6)',
       [word.word, word.mean, word.type, word.pronounce, word.description, word.username],
       (err, results) => {
         if (err) {
@@ -31,6 +31,22 @@ module.exports = (app, passport, db) => {
         }
         if (results) {
           res.send("added")
+        }
+      })
+  })
+
+  app.post("/dictionary/edit", (req, res) => {
+    word = req.body
+    console.log(word)
+    db.query('UPDATE VETERINARY_HUSBANDRY SET word=$1, mean=$2, type=$3, pronunciation=$4, description=$5, times=CURRENT_DATE, username=$6 WHERE description=$5;',
+      [word.word, word.mean, word.type, word.pronounce, word.description, word.username],
+      (err, results) => {
+        if (err) {
+          console.log(err)
+          res.send("failed")
+        }
+        if (results) {
+          res.send("edited")
         }
       })
   })

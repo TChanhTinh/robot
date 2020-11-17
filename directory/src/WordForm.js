@@ -4,7 +4,7 @@ import axios from 'axios';
 
 const { TextArea } = Input
 
-function WordForm({ form, wordData }) {
+function WordForm({ form, wordData, actionType }) {
     const layout = {
         labelCol: { span: 8 },
         wrapperCol: { span: 16 },
@@ -12,7 +12,7 @@ function WordForm({ form, wordData }) {
 
     const onFinish = values => {
         //console.log('Success:', values);
-        axios.post('/dictionary/add', values)
+        axios.post(`/dictionary/${actionType}`, {...{index: wordData.index}, ...values})
         .then(res => {
             console.log(res)
             form.resetFields()

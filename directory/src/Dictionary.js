@@ -11,6 +11,7 @@ const { Content, Header } = Layout
 function Dictionary() {
   const [word, setWord] = useState("")
   const [wordData, setWordData] = useState({
+    index: 0,
     mean: '',
     type: '',
     pronunce: '',
@@ -27,6 +28,7 @@ function Dictionary() {
     axios.get(`/search/dictionary/${word}`)
     .then( res => {
       const wordDa = {
+        index: res.data.index,
         word: res.data.word,
         mean: res.data.mean,
         type: res.data.type,
@@ -61,10 +63,10 @@ function Dictionary() {
 
             <Col span={1} >
               <AddWord className="dictionary-container-tab-menu-button" wordData={wordData}
-              icon="🖉"/>
+              icon="🖉" type="edit"/>
             </Col>
             <Col span={1}>
-              <AddWord className="dictionary-container-tab-menu-button" icon="+"/>
+              <AddWord className="dictionary-container-tab-menu-button" wordData={wordData} icon="+" type="add"/>
             </Col>
           </Row>
 
@@ -76,15 +78,6 @@ function Dictionary() {
                 </div>
               )
             })}
-
-            <Row className="dictionary-stamp">
-              <Col span={12}>
-                {stamp.username}
-              </Col>
-              <Col span={12}>
-                {stamp.timestamp}
-              </Col>
-            </Row>
           </div>
     </div>
   );

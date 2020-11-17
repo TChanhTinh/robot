@@ -2,7 +2,7 @@ import React, {useState} from 'react'
 import { Button, Modal, Form } from 'antd'
 import WordForm from './WordForm';
 
-function AddWord({ icon, wordData }) {
+function AddWord({ icon, wordData, type }) {
     const [modalVisibility, setModalVisibility] = useState(false)
     const [loading, setLoading] = useState(false)
 
@@ -31,7 +31,8 @@ function AddWord({ icon, wordData }) {
             <Button type="primary" icon={icon} shape="circle" onClick={() => showModal()}>
             </Button>
             <Modal
-                title="Add new word to dictionary"
+                title={`${type} new word to dictionary`}
+                actionType={type}
                 visible={modalVisibility}
                 onOk={() => handleOk()}
                 onCancel={() => handleCancel()}
@@ -44,7 +45,7 @@ function AddWord({ icon, wordData }) {
                     </Button>,
                 ]}
             >
-                <WordForm form={form} wordData={wordData}/>
+                <WordForm form={form} wordData={wordData} actionType={type}/>
             </Modal>
         </div>
     )

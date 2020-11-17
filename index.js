@@ -12,7 +12,7 @@ const env = process.env.NODE_ENV || 'development'
 
 //Database connect
 const { Pool, Client } = require('pg')
-const connectionString = 'postgresql://postgres:admin@localhost:5432/robot'
+const connectionString = 'postgresql://postgres:admin@localhost:5432/robot2'
 
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
