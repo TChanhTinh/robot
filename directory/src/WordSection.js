@@ -8,9 +8,15 @@ function WordSection({ title, data }) {
               <Col span={24} className="dictionary-content-header">
                 {title}
               </Col>
-              <Col span={24}>
-                {data}
-              </Col>
+              {Array.isArray(data) ? 
+                <Col span={24}>
+                  {data.map(mapData => `${mapData}, `)}
+                </Col>
+              :
+                <Col span={24}>
+                  {data}
+                </Col>
+            }
             </Row>
         </div>
     )

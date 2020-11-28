@@ -10,10 +10,6 @@ const app = express()
 
 const env = process.env.NODE_ENV || 'development'
 
-//Database connect
-const { Pool, Client } = require('pg')
-const connectionString = 'postgresql://postgres:admin@localhost:5432/robot2'
-
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 
@@ -22,10 +18,6 @@ app.use(require('cookie-parser')());
 app.use(require('express-session')({ secret: 'rainbow cat', resave: false, saveUninitialized: false }));
 app.use(passport.initialize());
 app.use(passport.session());
-
-const pool = new Pool({
-    connectionString: connectionString,
-})
 
 //Use morgan logging
 app.use(morgan())

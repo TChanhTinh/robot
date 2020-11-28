@@ -10,6 +10,7 @@ const { Content, Header } = Layout
 
 function Dictionary() {
   const [word, setWord] = useState("")
+  const [relateWord, setRelateWord] = useState([])
   const [wordData, setWordData] = useState({
     index: 0,
     mean: '',
@@ -25,7 +26,7 @@ function Dictionary() {
   })
 
   useEffect(() => {
-    axios.get(`/search/dictionary/${word}`)
+    axios.get(`http://localhost:9000/search/dictionary/${word}`)
     .then( res => {
       const wordDa = {
         index: res.data.index,
@@ -35,6 +36,7 @@ function Dictionary() {
         pronunce: res.data.pronunciation,
         description: res.data.description,
       }
+      const relate = res.data.relate
 
       const stamp = {
         timestamp: res.data.timestamp,
@@ -43,6 +45,7 @@ function Dictionary() {
 
       console.log(res.data)
       setWordData(wordDa)
+      setRelateWord(relate)
       setStamp(stamp)
     })
     .catch( err => {
@@ -78,6 +81,9 @@ function Dictionary() {
                 </div>
               )
             })}
+            <div className="dictionary-content-section">
+              <WordSection className="dictionary-content-section" title='RELATE WORD' data={relateWord}/>
+            </div>
           </div>
     </div>
   );

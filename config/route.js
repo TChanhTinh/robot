@@ -10,24 +10,42 @@ module.exports = (app, passport, db) => {
 
   app.get("/search/dictionary/:word", async (req, res) => {
     const word = req.params.word
-    //const { rows } = await pool.query(`SELECT * FROM Dictionary WHERE word='${word}'`)
+    let outputWord;
     db.query('SELECT * FROM veterinary_husbandry WHERE lower(word)=lower($1)', [word], (err, results) => {
       if (err)
         res.send(err)
       if (results)
-        res.send(results.rows[0])
+        outputWord = results.rows[0]
+        db.query('SELECT relate_word FROM related_word WHERE lower(word)=lower($1)', [word], (err, results) => {
+          if(err)
+            res.send(err)
+          if(results) {
+            let relate = results.rows.map(a => a.relate_word);
+            res.send({...outputWord, ...{relate: relate} })
+          }
+        })
     })
+    
+  })
 
+  app.get("/relate/:word", async (req, res) => {
+    const word = req.params.word
+    db.query('SELECT relate_word FROM related_word WHERE lower(word)=lower($1)', [word], (err, results) => {
+      if(err)
+        res.send(err)
+      if(results)
+        res.send(results.rows)
+    })
   })
 
   app.post("/dictionary/add", (req, res) => {
     word = req.body
-    db.query('INSERT INTO VETERINARY_HUSBANDRY(word, mean, type, pronunciation, description, times, username) values($1, $2, $3, $4, $5, CURRENT_DATE, $6)',
+    db.query("INSERT INTO VETERINARY_HUSBANDRY(word, mean, type, pronunciation, description, times, username) values($1, $2, $3, $4, $5, CURRENT_DATE, $6);",
       [word.word, word.mean, word.type, word.pronounce, word.description, word.username],
       (err, results) => {
         if (err) {
           console.log(err)
-          res.send("failed")
+          res.send(err)
         }
         if (results) {
           res.send("added")
@@ -55,7 +73,7 @@ module.exports = (app, passport, db) => {
   app.get('/dictionary/register', admin.renderRegister)
   app.post('/dictionary/login', (req, res, next) => {
     console.log(req.body)
-    passport.authenticate('local', { successRedirect: '/dictionary/admin', failureRedirect: '/dictionary/login' })(req, res, next)
+    passport.authenticate('local', { successRedirect: '/', failureRedirect: '/dictionary/login' })(req, res, next)
   })
 
   app.get('/admin/panel', requiresAdmin, admin.renderPanel)

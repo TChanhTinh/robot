@@ -2,7 +2,7 @@ module.exports = {
 	db: {
 		user: 'postgres',
 		password: 'admin',
-		database: 'robot',
+		database: 'robot2',
 		host: 'localhost',
 		port: 5432,
 		max: 50,
