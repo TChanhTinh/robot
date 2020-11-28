@@ -15,9 +15,16 @@ module.exports = (app, passport, db) => {
       if (err)
         res.send(err)
       if (results)
-        res.send(results.rows[0])
+        outputWord = results.rows[0]
+        db.query('SELECT relate_word FROM related_word WHERE lower(word)=lower($1)', [word], (err, results) => {
+          if(err)
+            res.send(err)
+          if(results) {
+            let relate = results.rows.map(a => a.relate_word);
+            res.send({...outputWord, ...{relate: relate} })
+          }
+        })
     })
-
   })
 
   app.post("/dictionary/add", (req, res) => {
