@@ -2,7 +2,7 @@ import React, {useState} from 'react'
 import { Button, Modal, Form } from 'antd'
 import WordForm from './WordForm';
 
-function AddWord({ icon, wordData, type }) {
+function AddWord({ icon, wordData, relateData, type }) {
     const [modalVisibility, setModalVisibility] = useState(false)
     const [loading, setLoading] = useState(false)
 
@@ -45,7 +45,7 @@ function AddWord({ icon, wordData, type }) {
                     </Button>,
                 ]}
             >
-                <WordForm form={form} wordData={wordData} actionType={type}/>
+                <WordForm form={form} wordData={wordData} relateData={relateData} actionType={type}/>
             </Modal>
         </div>
     )

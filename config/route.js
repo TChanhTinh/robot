@@ -40,6 +40,7 @@ module.exports = (app, passport, db) => {
 
   app.post("/dictionary/add", (req, res) => {
     word = req.body
+    console.log(req.body)
     db.query("INSERT INTO VETERINARY_HUSBANDRY(word, mean, type, pronunciation, description, times, username) values($1, $2, $3, $4, $5, CURRENT_DATE, $6);",
       [word.word, word.mean, word.type, word.pronounce, word.description, word.username],
       (err, results) => {
@@ -48,7 +49,15 @@ module.exports = (app, passport, db) => {
           res.send(err)
         }
         if (results) {
-          res.send("added")
+          word.relate.map(mapData => {
+            db.query("INSERT INTO RELATED_WORD(word, relate_word) values($1, $2);",
+            [word.word, mapData],
+            (err, results) => {
+              if(err)
+                console.log(err)
+            })  
+          })
+          
         }
       })
   })
@@ -64,7 +73,19 @@ module.exports = (app, passport, db) => {
           res.send("failed")
         }
         if (results) {
-          res.send("edited")
+          db.query("DELETE FROM RELATED_WORD WHERE word=$1",
+            [word.word],
+            (err, results) => {
+              if(results)
+              word.relate.map(mapData => {
+                db.query("INSERT INTO RELATED_WORD(word, relate_word) values($1, $2);",
+                [word.word, mapData],
+                (err, results) => {
+                  if(err)
+                    console.log(err)
+                })  
+              })
+          })
         }
       })
   })

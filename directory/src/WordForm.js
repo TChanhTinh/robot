@@ -1,10 +1,12 @@
-import React, { useEffect } from 'react'
-import { Form, Input, notification  } from 'antd'
+import React, { useEffect, useState } from 'react'
+import { Form, Input, Button, notification  } from 'antd'
 import axios from 'axios';
 
 const { TextArea } = Input
 
-function WordForm({ form, wordData, actionType }) {
+function WordForm({ form, wordData, relateData, actionType }) {
+    const [relate, setRelate] = useState([''])
+
     const layout = {
         labelCol: { span: 8 },
         wrapperCol: { span: 16 },
@@ -12,7 +14,7 @@ function WordForm({ form, wordData, actionType }) {
 
     const onFinish = values => {
         //console.log('Success:', values);
-        axios.post(`/dictionary/${actionType}`, {...{index: wordData.index}, ...values})
+        axios.post(`http://localhost:9000/dictionary/${actionType}`, {...{index: wordData.index}, ...values, ...{relate: relate}})
         .then(res => {
             console.log(res)
             form.resetFields()
@@ -30,16 +32,24 @@ function WordForm({ form, wordData, actionType }) {
         });
     };
 
+    const handleChangeRelateWord = (index, e) => {
+        //console.log(e.target.value + index)
+        let temp = [...relate]
+        temp[index] = e.target.value;
+        setRelate(temp) 
+    }
+
     useEffect(() => {
-        if(wordData != undefined)
+        if(wordData != undefined) {}
             form.setFieldsValue({
                 username: wordData.username,
                 word: wordData.word,
                 mean: wordData.mean,
                 type: wordData.type,
                 pronounce: wordData.pronunce,
-                description: wordData.description
+                description: wordData.description,
             })
+            setRelate(relateData)
     }, [wordData])
 
     return (
@@ -94,6 +104,20 @@ function WordForm({ form, wordData, actionType }) {
                 rules={[{ required: true, message: 'please input correct pronounce!' }]}
             >
                 <TextArea></TextArea>
+            </Form.Item>
+
+            <Form.Item
+                label="Relate word"
+                name="relate2"
+                rules={[{ required: false, message: '' }]}
+            >
+                {relate.map((mapData, index) => (
+                        <Input value={mapData} onChange={(e) => handleChangeRelateWord(index, e)}>
+                            
+                        </Input>
+                    ))
+                }
+                <Button onClick={() => setRelate([...relate, ''])}>Add more relate</Button>
             </Form.Item>
         </Form>
     )

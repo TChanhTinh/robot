@@ -65,11 +65,11 @@ function Dictionary() {
             <Col span={4}/>
 
             <Col span={1} >
-              <AddWord className="dictionary-container-tab-menu-button" wordData={wordData}
+              <AddWord className="dictionary-container-tab-menu-button" wordData={wordData} relateData={relateWord}
               icon="🖉" type="edit"/>
             </Col>
             <Col span={1}>
-              <AddWord className="dictionary-container-tab-menu-button" wordData={wordData} icon="+" type="add"/>
+              <AddWord className="dictionary-container-tab-menu-button" wordData={wordData} relateData={relateWord} icon="+" type="add"/>
             </Col>
           </Row>
 
