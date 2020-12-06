@@ -65,7 +65,7 @@ module.exports = (app, passport, db) => {
   app.post("/dictionary/edit", (req, res) => {
     word = req.body
     console.log(word)
-    db.query('UPDATE VETERINARY_HUSBANDRY SET word=$1, mean=$2, type=$3, pronunciation=$4, description=$5, times=CURRENT_DATE, username=$6 WHERE description=$5;',
+    db.query('UPDATE VETERINARY_HUSBANDRY SET word=$1, mean=$2, type=$3, pronunciation=$4, description=$5, times=CURRENT_DATE, username=$6 WHERE description=$5 OR word=$1;',
       [word.word, word.mean, word.type, word.pronounce, word.description, word.username],
       (err, results) => {
         if (err) {

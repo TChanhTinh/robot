@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Form, Input, Button, notification  } from 'antd'
+import { Form, Input, Button, notification, Row, Col } from 'antd'
 import axios from 'axios';
 
 const { TextArea } = Input
@@ -14,42 +14,48 @@ function WordForm({ form, wordData, relateData, actionType }) {
 
     const onFinish = values => {
         //console.log('Success:', values);
-        axios.post(`http://localhost:9000/dictionary/${actionType}`, {...{index: wordData.index}, ...values, ...{relate: relate}})
-        .then(res => {
-            console.log(res)
-            form.resetFields()
-            openNotification("Success!")
-        })
+        axios.post(`http://localhost:9000/dictionary/${actionType}`, { ...{ index: wordData.index }, ...values, ...{ relate: relate } })
+            .then(res => {
+                console.log(res)
+                form.resetFields()
+                openNotification("Success!")
+            })
     };
 
     const openNotification = (description) => {
         notification.open({
-          message: 'Form submit',
-          description: description,
-          onClick: () => {
-            console.log('Notification Clicked!');
-          },
+            message: 'Form submit',
+            description: description,
+            onClick: () => {
+                console.log('Notification Clicked!');
+            },
         });
     };
 
     const handleChangeRelateWord = (index, e) => {
         //console.log(e.target.value + index)
         let temp = [...relate]
-        temp[index] = e.target.value;
-        setRelate(temp) 
+        temp[index] = e.target.value
+        setRelate(temp)
+    }
+
+    const handleDeleteClick = (index) => {
+        let temp = [...relate]
+        temp.splice(index, 1)
+        setRelate(temp)
     }
 
     useEffect(() => {
-        if(wordData != undefined) {}
-            form.setFieldsValue({
-                username: wordData.username,
-                word: wordData.word,
-                mean: wordData.mean,
-                type: wordData.type,
-                pronounce: wordData.pronunce,
-                description: wordData.description,
-            })
-            setRelate(relateData)
+        if (wordData != undefined) { }
+        form.setFieldsValue({
+            username: wordData.username,
+            word: wordData.word,
+            mean: wordData.mean,
+            type: wordData.type,
+            pronounce: wordData.pronunce,
+            description: wordData.description,
+        })
+        setRelate(relateData)
     }, [wordData])
 
     return (
@@ -64,7 +70,7 @@ function WordForm({ form, wordData, relateData, actionType }) {
                 label="Username"
                 name="username"
             >
-                <Input/>
+                <Input />
             </Form.Item>
             <Form.Item
                 label="Word"
@@ -112,10 +118,15 @@ function WordForm({ form, wordData, relateData, actionType }) {
                 rules={[{ required: false, message: '' }]}
             >
                 {relate.map((mapData, index) => (
-                        <Input value={mapData} onChange={(e) => handleChangeRelateWord(index, e)}>
-                            
-                        </Input>
-                    ))
+                    <Row>
+                        <Col span={21}>
+                            <Input value={mapData} onChange={(e) => handleChangeRelateWord(index, e)} />
+                        </Col>
+                        <Col span={3}>
+                            <Button danger onClick={() => handleDeleteClick(index)}>X</Button>
+                        </Col>
+                    </Row>
+                ))
                 }
                 <Button onClick={() => setRelate([...relate, ''])}>Add more relate</Button>
             </Form.Item>
