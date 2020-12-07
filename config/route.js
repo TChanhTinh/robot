@@ -8,6 +8,16 @@ module.exports = (app, passport, db) => {
     res.sendFile('index.html', { root: path.join(__dirname, '../dictionary')})
   })
 
+  app.get("/dictionary/sync/:day-:month-:year", (req, res) => {
+    const date = `${req.params.year}-${req.params.month}-${req.params.day}`
+    db.query('SELECT * FROM veterinary_husbandry WHERE times>$1::date ', [date], (err, results) => {
+      if(err)
+        console.log(err)
+      if(results)
+        res.send(results.rows)
+    })
+  })
+
   app.get("/search/dictionary/:word", async (req, res) => {
     const word = req.params.word
     let outputWord;
@@ -60,6 +70,23 @@ module.exports = (app, passport, db) => {
           
         }
       })
+  })
+
+  app.post("/dictionary/delete", (req, res) => {
+    word = req.body
+    db.query('DELETE FROM VETERINARY_HUSBANDRY WHERE lower(word)=lower($1)', [word.word], (err, results) => {
+      if(err)
+        console.log(err)
+      if(results)
+        db.query('DELETE FROM RELATED_WORD WHERE lower(word)=lower($1)', [word.word], (err, results) => {
+          if(err)
+            console.log(err)
+          if(results) {
+            res.send("Success")
+            console.log(results)
+          }
+        })
+    })
   })
 
   app.post("/dictionary/edit", (req, res) => {

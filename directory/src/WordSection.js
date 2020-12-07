@@ -8,10 +8,12 @@ function WordSection({ title, data }) {
               <Col span={24} className="dictionary-content-header">
                 {title}
               </Col>
-              {Array.isArray(data) ? 
+              {Array.isArray(data) ?
+                data.map(mapData =>
                 <Col span={24}>
-                  {data.map(mapData => `${mapData}, `)}
+                  {mapData}
                 </Col>
+                ) 
               :
                 <Col span={24}>
                   {data}

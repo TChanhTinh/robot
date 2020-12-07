@@ -13,12 +13,11 @@ function WordForm({ form, wordData, relateData, actionType }) {
     };
 
     const onFinish = values => {
-        //console.log('Success:', values);
         axios.post(`http://localhost:9000/dictionary/${actionType}`, { ...{ index: wordData.index }, ...values, ...{ relate: relate } })
             .then(res => {
-                console.log(res)
                 form.resetFields()
                 openNotification("Success!")
+                window.location.reload()
             })
     };
 

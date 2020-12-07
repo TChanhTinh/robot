@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Input, Row, Col, Layout, Button } from 'antd';
+import { Input, Row, Col, Layout, notification } from 'antd';
 import { formOutline } from '@ant-design/icons';
 import AddWord from './AddWord';
 import axios from 'axios'
@@ -8,22 +8,34 @@ import WordSection from './WordSection';
 const { Search } = Input;
 const { Content, Header } = Layout
 
+const wordStruct = {
+  index: 0,
+  mean: '',
+  type: '',
+  pronunce: '',
+  description: '',
+  timestamp: '',
+  username: ''
+}
+
 function Dictionary() {
-  const [word, setWord] = useState("")
+  const [word, setWord] = useState("Abattoi")
   const [relateWord, setRelateWord] = useState([])
-  const [wordData, setWordData] = useState({
-    index: 0,
-    mean: '',
-    type: '',
-    pronunce: '',
-    description: '',
-    timestamp: '',
-    username: ''
-  })
+  const [wordData, setWordData] = useState(wordStruct)
   const [stamp, setStamp] = useState({
     username: '',
     timestamp: ''
   })
+
+  const openNotification = (message, description) => {
+    notification.open({
+      message: message,
+      description: description,
+      onClick: () => {
+        console.log('Notification Clicked!');
+      },
+    });
+  };
 
   useEffect(() => {
     axios.get(`http://localhost:9000/search/dictionary/${word}`)
@@ -42,9 +54,7 @@ function Dictionary() {
         timestamp: res.data.timestamp,
         username: res.data.username
       }
-
-      console.log(res.data)
-      setWordData(wordDa)
+      res.data.word != null ? setWordData(wordDa) : openNotification("Tu khong ton tai", "Tu khong ton tai vui long thu lai!!") 
       setRelateWord(relate)
       setStamp(stamp)
     })
@@ -55,21 +65,21 @@ function Dictionary() {
 
   return (
     <div className="dictionary-container">
-      <a href='/dictionary/login'><Button>Login</Button></a>
           <Row className="dictionary-container-tab-menu">
             <Col span={6}/>
             <Col className="dictionary-search-bar" span={12}>
               <Search onSearch={value => setWord(value)} placeholder="Search word"></Search>
             </Col>
-
-            <Col span={4}/>
-
-            <Col span={1} >
-              <AddWord className="dictionary-container-tab-menu-button" wordData={wordData} relateData={relateWord}
+            <Col span={2}/>
+            <Col span={1} className="dictionary-container-tab-menu-button">
+              <AddWord wordData={wordStruct} relateData={[]} icon="+" color="green" type="add"/>
+            </Col>
+            <Col span={1} className="dictionary-container-tab-menu-button" >
+              <AddWord wordData={wordData} color="blue" relateData={relateWord}
               icon="🖉" type="edit"/>
             </Col>
-            <Col span={1}>
-              <AddWord className="dictionary-container-tab-menu-button" wordData={wordData} relateData={relateWord} icon="+" type="add"/>
+            <Col span={1} className="dictionary-container-tab-menu-button">
+              <AddWord wordData={wordData} relateData={relateWord} color="red" icon="🗑" type="delete"/>
             </Col>
           </Row>
 
@@ -81,9 +91,10 @@ function Dictionary() {
                 </div>
               )
             })}
-            <div className="dictionary-content-section">
+            {relateWord.length != 0 ? <div className="dictionary-content-section">
               <WordSection className="dictionary-content-section" title='RELATE WORD' data={relateWord}/>
-            </div>
+            </div> : <div/>}
+            
           </div>
     </div>
   );

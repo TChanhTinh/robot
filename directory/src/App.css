@@ -19,6 +19,7 @@
 
 .dictionary-content {
     text-align: center;
+    padding-bottom: 5vh;
 }
 
 .dictionary-content-header {
@@ -38,5 +39,10 @@
 }
 
 .dictionary-container-tab-menu-button {
-    padding: 2px 2px 2px 2px !important;
+    margin-left: 5px;
+}
+
+.app-logo {
+    width: 20%;
+    float: left;
 }
