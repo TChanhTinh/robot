@@ -1,0 +1,12 @@
+{
+  "name": "RobotNative",
+  "displayName": "RobotNative",
+  "expo": {
+    "name": "RobotNative",
+    "slug": "RobotNative",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  }
+}
