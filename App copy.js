@@ -5,8 +5,10 @@ import { StyleSheet, Text, View, TextInput } from 'react-native';
 import { SearchBar } from 'react-native-elements';
 
 import * as SQLite from 'expo-sqlite'
-import settings from './config/appSetting';
-const db = SQLite.openDatabase('db.veterinar', "v1", "App",  5 * 1024 * 1024) // returns Database object
+const db = SQLite.openDatabase('db.veterDictionary') // returns Database object
+
+import PouchDB from 'pouchdb-react-native'
+const db2 = new PouchDB('veterdb')
 
 export default function App() {
   const [lastSync, setLastSync] = useState({id: 0, times: "1999-1-1"})
@@ -45,10 +47,9 @@ export default function App() {
     })
   }
 
-  function syncData(value) {
-      Axios.get(`${settings.serverUrl}/dictionary/sync/${value.times}-0`)
+  function syncData() {  
+      Axios.get(`http://localhost:9000/dictionary/sync/${lastSync.times}-0`)
       .then((res) => {
-        console.log(`${settings.serverUrl}/dictionary/sync/${value.times}-0`)
         let query = "INSERT INTO veterinary_husbandry(word, type, pronunciation, description, mean, times) VALUES"
         res.data.map((mapData) => {
           query+=`('${mapData.word}', '${mapData.type}', '${mapData.pronunciation}', '${mapData.description}', '${mapData.mean}', date('now')), `
@@ -67,10 +68,10 @@ export default function App() {
 
   function queryData() {
     db.transaction(tx => {
-      /*tx.executeSql("SELECT * FROM veterinary_husbandry", null, 
+      tx.executeSql("SELECT * FROM veterinary_husbandry", null, 
           (txObj, resultSet) => console.log(resultSet.rows),
           (txObj, err) => console.log(err)
-        )*/
+        )
       tx.executeSql("SELECT times FROM sync", null, 
           (txObj, resultSet) => console.log(resultSet.rows),
           (txObj, err) => console.log(err)
@@ -85,24 +86,33 @@ export default function App() {
   function submitSearch(input) {
     db.transaction(tx => {
       tx.executeSql(`SELECT * FROM veterinary_husbandry WHERE lower(word)=lower('${input}')`, null,
-      (txObj, resultSet) => {console.log(resultSet.rows._array[0]); resultSet.rows._array[0] != null ? setWordData(resultSet.rows._array[0]) : {} },
+      (txObj, resultSet) => resultSet.rows[0] != null ? setWordData(resultSet.rows[0]) : {},
       (txObj, err) => console.log(err))
     })
   }
 
   useLayoutEffect(() => {  
-    initDb()
+    /*db.transaction(tx => {
+      tx.executeSql(
+        'CREATE TABLE IF NOT EXISTS veterinary_husbandry (id INTEGER PRIMARY KEY AUTOINCREMENT, word TEXT, type TEXT, pronunciation TEXT, description TEXT, mean TEXT, times TIMESTAMP)'
+      , null, (txObj, resultsSet) => console.log(resultsSet),
+        (txObj, err) => console.log(err)
+      )
+    })
+    /*initDb()*/
+    db2.get('4711')
+      .then(doc => console.log(doc))
   }, [])
   useEffect(() => {
     //deteleAllTableData()
-    db.transaction(tx => {
+    /*db.transaction(tx => {
       tx.executeSql(
         "SELECT * FROM sync WHERE id=(SELECT max(id) FROM sync)"
       , null, 
-      (txObj, resultSet) => { resultSet.rows._array[0] != undefined ? syncData(resultSet.rows._array[0]) : syncData({times: '1999-1-1'})},
+      (txObj, resultSet) => {syncData(setLastSync(resultSet.rows[0]))},
       (txObj, err) => console.log(err))
     })
-    queryData()
+    queryData()*/
   }, [])
 
   return (
@@ -111,12 +121,10 @@ export default function App() {
         style={{height: 40}}
         placeholder="Type here to translate!"
         onChangeText={e => updateSearch(e)}
-        onSubmitEditing={() => {console.log(word) ;submitSearch(word)}}
+        onSubmitEditing={() => submitSearch(word)}
         defaultValue={word}
       />
-      {Object.values(wordData).map((mapData) => (
-        <Text>{mapData}</Text>
-      ))}
+      <Text>{wordData.word} {wordData.type} {wordData.mean}</Text>
       <StatusBar style="auto" />
     </View>
   );
