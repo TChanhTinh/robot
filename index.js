@@ -35,6 +35,6 @@ require("./config/passport")(passport, db)
     console.log(result)
 })*/
 
-app.listen(9000, (req, res) => {
-    console.log("Server open at 9000")
+app.listen(process.env, (req, res) => {
+    console.log("Server open at " + process.env)
 })
