@@ -8,9 +8,10 @@ module.exports = (app, passport, db) => {
     res.sendFile('index.html', { root: path.join(__dirname, '../dictionary')})
   })
 
-  app.get("/dictionary/sync/:day-:month-:year", (req, res) => {
+  app.get("/dictionary/sync/:year-:month-:day-:index", (req, res) => {
     const date = `${req.params.year}-${req.params.month}-${req.params.day}`
-    db.query('SELECT * FROM veterinary_husbandry WHERE times>$1::date ', [date], (err, results) => {
+    const index = req.params.index
+    db.query('SELECT * FROM veterinary_husbandry WHERE times>$1::date AND index>$2', [date, index], (err, results) => {
       if(err)
         console.log(err)
       if(results)
